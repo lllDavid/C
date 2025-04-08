@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Structure for a node in the linked list
 typedef struct Node {
     int data;
     struct Node* next;
 } Node;
 
-// Function to create a new node
 Node* createNode(int data) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     if (!newNode) {
@@ -19,32 +17,29 @@ Node* createNode(int data) {
     return newNode;
 }
 
-// Function to insert a new node at the beginning
 void insertAtBeginning(Node** head, int data) {
     Node* newNode = createNode(data);
-    if (!newNode) return;  // Memory allocation failed
-    newNode->next = *head;  // Link the new node to the current head
-    *head = newNode;        // Update the head to the new node
+    if (!newNode) return;
+    newNode->next = *head;
+    *head = newNode;
 }
 
-// Function to insert a new node at the end
 void insertAtEnd(Node** head, int data) {
     Node* newNode = createNode(data);
-    if (!newNode) return;  // Memory allocation failed
+    if (!newNode) return;
     
     if (*head == NULL) {
-        *head = newNode;  // If the list is empty, the new node becomes the head
+        *head = newNode;
         return;
     }
     
     Node* temp = *head;
     while (temp->next != NULL) {
-        temp = temp->next;  // Traverse to the last node
+        temp = temp->next;
     }
-    temp->next = newNode;  // Link the new node at the end
+    temp->next = newNode;
 }
 
-// Function to delete a node with a specific value
 void deleteNode(Node** head, int data) {
     if (*head == NULL) {
         printf("List is empty\n");
@@ -53,43 +48,38 @@ void deleteNode(Node** head, int data) {
     
     Node* temp = *head;
     
-    // If the node to be deleted is the head node
     if (temp != NULL && temp->data == data) {
-        *head = temp->next;  // Move head to the next node
-        free(temp);          // Free the old head node
+        *head = temp->next;
+        free(temp);
         return;
     }
     
-    // Search for the node to be deleted
     Node* prev = NULL;
     while (temp != NULL && temp->data != data) {
         prev = temp;
         temp = temp->next;
     }
     
-    // If the node was not found
     if (temp == NULL) {
         printf("Node with data %d not found\n", data);
         return;
     }
     
-    prev->next = temp->next;  // Unlink the node from the list
-    free(temp);               // Free the memory occupied by the node
+    prev->next = temp->next;
+    free(temp);
 }
 
-// Function to search for a node with a specific value
 Node* search(Node* head, int data) {
     Node* temp = head;
     while (temp != NULL) {
         if (temp->data == data) {
-            return temp;  // Node found
+            return temp;
         }
         temp = temp->next;
     }
-    return NULL;  // Node not found
+    return NULL;
 }
 
-// Function to print the linked list
 void printList(Node* head) {
     if (head == NULL) {
         printf("The list is empty\n");
@@ -104,11 +94,9 @@ void printList(Node* head) {
     printf("NULL\n");
 }
 
-// Main function to test the linked list operations
 int main() {
-    Node* head = NULL;  // Start with an empty linked list
+    Node* head = NULL;
 
-    // Inserting elements at the beginning
     insertAtBeginning(&head, 10);
     insertAtBeginning(&head, 20);
     insertAtBeginning(&head, 30);
@@ -116,14 +104,12 @@ int main() {
     printf("Linked List after inserting at the beginning:\n");
     printList(head);
 
-    // Inserting elements at the end
     insertAtEnd(&head, 40);
     insertAtEnd(&head, 50);
 
     printf("\nLinked List after inserting at the end:\n");
     printList(head);
 
-    // Searching for an element
     int searchValue = 40;
     Node* result = search(head, searchValue);
     if (result != NULL) {
@@ -132,15 +118,12 @@ int main() {
         printf("\nNode with value %d not found in the list\n", searchValue);
     }
 
-    // Deleting an element
     deleteNode(&head, 30);
     printf("\nLinked List after deleting node with value 30:\n");
     printList(head);
 
-    // Deleting an element that doesn't exist
-    deleteNode(&head, 100);  // This node is not present
+    deleteNode(&head, 100);
 
-    // Final list print
     printf("\nFinal Linked List:\n");
     printList(head);
 
