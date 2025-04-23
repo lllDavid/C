@@ -1,4 +1,3 @@
-
 int exponentialSearch(int arr[], int n, int target) {
     if (arr[0] == target) return 0;
     int i = 1;
