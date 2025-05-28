@@ -1,63 +1,68 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-void remove_comments(FILE *input_file, FILE *output_file) {
-    char ch, prev_ch = '\0';
-    int inside_single_line_comment = 0, inside_multi_line_comment = 0;
+#define MAX 100  
 
-    while ((ch = fgetc(input_file)) != EOF) {
-        if (!inside_multi_line_comment && ch == '/' && prev_ch == '/') {
-            inside_single_line_comment = 1;
-            continue;
-        }
+typedef struct {
+    int items[MAX];
+    int top;
+} Stack;
 
-        if (ch == '*' && prev_ch == '/') {
-            inside_multi_line_comment = 1;
-            prev_ch = ch;
-            continue;
-        }
+void init(Stack *s) {
+    s->top = -1;
+}
 
-        if (inside_single_line_comment) {
-            if (ch == '\n') {
-                inside_single_line_comment = 0;
-                fputc(ch, output_file);
-            }
-            continue;
-        }
+int isFull(Stack *s) {
+    return s->top == MAX - 1;
+}
 
-        if (inside_multi_line_comment) {
-            if (ch == '/' && prev_ch == '*') {
-                inside_multi_line_comment = 0;
-            }
-            prev_ch = ch;
-            continue;
-        }
+int isEmpty(Stack *s) {
+    return s->top == -1;
+}
 
-        fputc(ch, output_file);
-        prev_ch = ch;
+void push(Stack *s, int item) {
+    if (isFull(s)) {
+        printf("Stack overflow! Cannot push %d\n", item);
+        return;
     }
+    s->items[++(s->top)] = item;
+    printf("Pushed %d onto the stack\n", item);
+}
+
+int pop(Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack underflow! Cannot pop\n");
+        return -1; 
+    }
+    return s->items[(s->top)--];
+}
+
+int peek(Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty\n");
+        return -1;
+    }
+    return s->items[s->top];
 }
 
 int main() {
-    FILE *input_file = fopen("input.c", "r");
-    if (input_file == NULL) {
-        printf("Could not open file.\n");
-        return 1;
+    Stack s;
+    init(&s);
+
+    push(&s, 10);
+    push(&s, 20);
+    push(&s, 30);
+
+    printf("Top element is %d\n", peek(&s));
+
+    printf("Popped element is %d\n", pop(&s));
+    printf("Popped element is %d\n", pop(&s));
+
+    if (isEmpty(&s)) {
+        printf("Stack is empty now\n");
+    } else {
+        printf("Stack is not empty\n");
     }
 
-    FILE *output_file = fopen("output.c", "w");
-    if (output_file == NULL) {
-        printf("Could not open output file.\n");
-        fclose(input_file);
-        return 1;
-    }
-
-    remove_comments(input_file, output_file);
-
-    fclose(input_file);
-    fclose(output_file);
-
-    printf("Comments removed successfully!\n");
     return 0;
 }

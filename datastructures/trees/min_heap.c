@@ -1,79 +1,91 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
-#define MAX_SIZE 100
+typedef struct MinHeap {
+    int *arr;
+    int capacity;
+    int size;
+} MinHeap;
 
-int heap[MAX_SIZE];
-int size = 0;
-
-void swap(int *a, int *b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
+MinHeap* createMinHeap(int capacity) {
+    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
+    heap->capacity = capacity;
+    heap->size = 0;
+    heap->arr = (int*)malloc(capacity * sizeof(int));
+    return heap;
 }
 
-void insert(int value) {
-    if (size >= MAX_SIZE) {
-        printf("Heap overflow!\n");
-        return;
-    }
+int parent(int i) { return (i - 1) / 2; }
+int left(int i) { return 2 * i + 1; }
+int right(int i) { return 2 * i + 2; }
 
-    int i = size++;
-    heap[i] = value;
-
-    while (i != 0 && heap[(i - 1) / 2] > heap[i]) {
-        swap(&heap[i], &heap[(i - 1) / 2]);
-        i = (i - 1) / 2;
-    }
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
 }
 
-void heapify(int i) {
+void minHeapify(MinHeap* heap, int i) {
+    int l = left(i);
+    int r = right(i);
     int smallest = i;
-    int left = 2 * i + 1;
-    int right = 2 * i + 2;
 
-    if (left < size && heap[left] < heap[smallest])
-        smallest = left;
+    if (l < heap->size && heap->arr[l] < heap->arr[smallest])
+        smallest = l;
 
-    if (right < size && heap[right] < heap[smallest])
-        smallest = right;
+    if (r < heap->size && heap->arr[r] < heap->arr[smallest])
+        smallest = r;
 
     if (smallest != i) {
-        swap(&heap[i], &heap[smallest]);
-        heapify(smallest);
+        swap(&heap->arr[i], &heap->arr[smallest]);
+        minHeapify(heap, smallest);
     }
 }
 
-int extractMin() {
-    if (size <= 0) {
-        printf("Heap underflow!\n");
-        return -1;
+void insertKey(MinHeap* heap, int k) {
+    if (heap->size == heap->capacity)
+        return;
+    heap->size++;
+    int i = heap->size - 1;
+    heap->arr[i] = k;
+    while (i != 0 && heap->arr[parent(i)] > heap->arr[i]) {
+        swap(&heap->arr[i], &heap->arr[parent(i)]);
+        i = parent(i);
     }
+}
 
-    int root = heap[0];
-    heap[0] = heap[--size];
-    heapify(0);
+int extractMin(MinHeap* heap) {
+    if (heap->size <= 0)
+        return INT_MAX;
+    if (heap->size == 1) {
+        heap->size--;
+        return heap->arr[0];
+    }
+    int root = heap->arr[0];
+    heap->arr[0] = heap->arr[heap->size - 1];
+    heap->size--;
+    minHeapify(heap, 0);
     return root;
 }
 
-void displayHeap() {
-    printf("Heap array: ");
-    for (int i = 0; i < size; i++)
-        printf("%d ", heap[i]);
-    printf("\n");
+int getMin(MinHeap* heap) {
+    if (heap->size <= 0)
+        return INT_MAX;
+    return heap->arr[0];
 }
 
 int main() {
-    insert(10);
-    insert(20);
-    insert(5);
-    insert(30);
-    insert(1);
-
-    displayHeap();
-
-    printf("Extracted min: %d\n", extractMin());
-    displayHeap();
-
+    MinHeap* heap = createMinHeap(10);
+    insertKey(heap, 3);
+    insertKey(heap, 2);
+    insertKey(heap, 15);
+    insertKey(heap, 5);
+    insertKey(heap, 4);
+    insertKey(heap, 45);
+    printf("%d\n", extractMin(heap));
+    printf("%d\n", getMin(heap));
+    free(heap->arr);
+    free(heap);
     return 0;
 }

@@ -1,79 +1,91 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
-#define MAX_SIZE 100
+typedef struct MaxHeap {
+    int *arr;
+    int capacity;
+    int size;
+} MaxHeap;
 
-int heap[MAX_SIZE];
-int size = 0;
-
-void swap(int *a, int *b) {
-    int temp = *a;
-    *a = *b;
-    *b = temp;
+MaxHeap* createMaxHeap(int capacity) {
+    MaxHeap* heap = (MaxHeap*)malloc(sizeof(MaxHeap));
+    heap->capacity = capacity;
+    heap->size = 0;
+    heap->arr = (int*)malloc(capacity * sizeof(int));
+    return heap;
 }
 
-void insert(int value) {
-    if (size >= MAX_SIZE) {
-        printf("Heap overflow!\n");
-        return;
-    }
+int parent(int i) { return (i - 1) / 2; }
+int left(int i) { return 2 * i + 1; }
+int right(int i) { return 2 * i + 2; }
 
-    int i = size++;
-    heap[i] = value;
-
-    while (i != 0 && heap[(i - 1) / 2] < heap[i]) {
-        swap(&heap[i], &heap[(i - 1) / 2]);
-        i = (i - 1) / 2;
-    }
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
 }
 
-void heapify(int i) {
+void maxHeapify(MaxHeap* heap, int i) {
+    int l = left(i);
+    int r = right(i);
     int largest = i;
-    int left = 2 * i + 1;
-    int right = 2 * i + 2;
 
-    if (left < size && heap[left] > heap[largest])
-        largest = left;
+    if (l < heap->size && heap->arr[l] > heap->arr[largest])
+        largest = l;
 
-    if (right < size && heap[right] > heap[largest])
-        largest = right;
+    if (r < heap->size && heap->arr[r] > heap->arr[largest])
+        largest = r;
 
     if (largest != i) {
-        swap(&heap[i], &heap[largest]);
-        heapify(largest);
+        swap(&heap->arr[i], &heap->arr[largest]);
+        maxHeapify(heap, largest);
     }
 }
 
-int extractMax() {
-    if (size <= 0) {
-        printf("Heap underflow!\n");
-        return -1;
+void insertKey(MaxHeap* heap, int k) {
+    if (heap->size == heap->capacity)
+        return;
+    heap->size++;
+    int i = heap->size - 1;
+    heap->arr[i] = k;
+    while (i != 0 && heap->arr[parent(i)] < heap->arr[i]) {
+        swap(&heap->arr[i], &heap->arr[parent(i)]);
+        i = parent(i);
     }
+}
 
-    int root = heap[0];
-    heap[0] = heap[--size];
-    heapify(0);
+int extractMax(MaxHeap* heap) {
+    if (heap->size <= 0)
+        return INT_MIN;
+    if (heap->size == 1) {
+        heap->size--;
+        return heap->arr[0];
+    }
+    int root = heap->arr[0];
+    heap->arr[0] = heap->arr[heap->size - 1];
+    heap->size--;
+    maxHeapify(heap, 0);
     return root;
 }
 
-void displayHeap() {
-    printf("Heap array: ");
-    for (int i = 0; i < size; i++)
-        printf("%d ", heap[i]);
-    printf("\n");
+int getMax(MaxHeap* heap) {
+    if (heap->size <= 0)
+        return INT_MIN;
+    return heap->arr[0];
 }
 
 int main() {
-    insert(15);
-    insert(10);
-    insert(30);
-    insert(40);
-    insert(20);
-
-    displayHeap();
-
-    printf("Extracted max: %d\n", extractMax());
-    displayHeap();
-
+    MaxHeap* heap = createMaxHeap(10);
+    insertKey(heap, 3);
+    insertKey(heap, 2);
+    insertKey(heap, 15);
+    insertKey(heap, 5);
+    insertKey(heap, 4);
+    insertKey(heap, 45);
+    printf("%d\n", extractMax(heap));
+    printf("%d\n", getMax(heap));
+    free(heap->arr);
+    free(heap);
     return 0;
 }

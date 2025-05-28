@@ -15,6 +15,16 @@ struct Node* createNode(int data) {
     return newNode;
 }
 
+struct Node* insert(struct Node* root, int data) {
+    if (root == NULL)
+        return createNode(data);
+    if (data < root->data)
+        root->left = insert(root->left, data);
+    else if (data > root->data)
+        root->right = insert(root->right, data);
+    return root;
+}
+
 void inorder(struct Node* root) {
     if (root != NULL) {
         inorder(root->left);
@@ -24,12 +34,14 @@ void inorder(struct Node* root) {
 }
 
 int main() {
-    struct Node* root = createNode(1);
-    root->left = createNode(2);
-    root->right = createNode(3);
-    root->left->left = createNode(4);
-    root->left->right = createNode(5);
+    struct Node* root = NULL;
+    root = insert(root, 10);
+    insert(root, 5);
+    insert(root, 15);
+    insert(root, 3);
+    insert(root, 7);
 
+    printf("Inorder traversal of BST: ");
     inorder(root);
     return 0;
 }
