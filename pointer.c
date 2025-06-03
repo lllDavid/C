@@ -10,7 +10,7 @@ int main() {
     printf("Value pointed to by ptr: %d\n", *ptr);  
 
     *ptr = 20;
-    printf("New value of number (after pointer update): %d\n", number);
+    printf("New value of number: %d\n", number);
 
     return 0;
 }

@@ -5,17 +5,16 @@
 int global_initialized = 42;        
 int global_uninitialized;           
 
-void print_message() {              
-    printf("Inside function (code segment)\n");
-}
-
 int main() {
     int local_var = 10;             
     char *heap_var = malloc(100);   
+    if (!heap_var) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
 
-    strcpy(heap_var, "Hello from heap!");
+    strcpy_s(heap_var, 100, "String");
 
-    printf("Address of function        : %p (Code/Text segment)\n", (void*)print_message);
     printf("Address of global init var: %p (Data segment)\n", (void*)&global_initialized);
     printf("Address of global uninit  : %p (BSS segment)\n", (void*)&global_uninitialized);
     printf("Address of local variable : %p (Stack segment)\n", (void*)&local_var);
