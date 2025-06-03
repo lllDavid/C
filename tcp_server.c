@@ -1,3 +1,4 @@
+// clang server.c -lws2_32 -o server.exe
 #include <stdio.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>

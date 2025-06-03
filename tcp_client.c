@@ -1,3 +1,4 @@
+// clang client.c -lws2_32 -o client.exe
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,7 +9,7 @@ int main() {
     WSADATA wsa;
     SOCKET sock;
     struct sockaddr_in server;
-    char *message = "Hello, Server!";
+    char *message = "Message";
     char buffer[512];
     int recv_size;
 
