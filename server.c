@@ -1,8 +1,7 @@
-// clang server.c -lws2_32 -o server.exe
 #include <stdio.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-
+// clang server.c -lws2_32 -o server.exe
 int main() {
     WSADATA wsa;
     SOCKET server_sock, client_sock;
@@ -22,22 +21,23 @@ int main() {
     listen(server_sock, 3);
 
     printf("Waiting for connections...\n");
-    client_sock = accept(server_sock, (struct sockaddr*)&client, &client_len);
-    if (client_sock == INVALID_SOCKET) {
-        printf("Accept failed\n");
-        closesocket(server_sock);
-        WSACleanup();
-        return 1;
+
+    while (1) {
+        client_sock = accept(server_sock, (struct sockaddr*)&client, &client_len);
+        if (client_sock == INVALID_SOCKET) {
+            printf("Accept failed\n");
+            break;
+        }
+
+        while ((recv_size = recv(client_sock, buffer, sizeof(buffer) - 1, 0)) > 0) {
+            buffer[recv_size] = '\0';
+            printf("Received: %s\n", buffer);
+            send(client_sock, buffer, recv_size, 0);
+        }
+
+        closesocket(client_sock);
     }
 
-    recv_size = recv(client_sock, buffer, sizeof(buffer)-1, 0);
-    if (recv_size > 0) {
-        buffer[recv_size] = '\0';
-        printf("Received: %s\n", buffer);
-        send(client_sock, buffer, recv_size, 0); 
-    }
-
-    closesocket(client_sock);
     closesocket(server_sock);
     WSACleanup();
     return 0;

@@ -1,15 +1,13 @@
-// clang client.c -lws2_32 -o client.exe
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-
+// clang client.c -lws2_32 -o client.exe
 int main() {
     WSADATA wsa;
     SOCKET sock;
     struct sockaddr_in server;
-    char *message = "Message";
     char buffer[512];
     int recv_size;
 
@@ -32,11 +30,27 @@ int main() {
         return 1;
     }
 
-    send(sock, message, strlen(message), 0);
-    recv_size = recv(sock, buffer, sizeof(buffer) - 1, 0);
-    if (recv_size > 0) {
+    while (1) {
+        printf("Enter message to send (or 'quit' to exit): ");
+        if (!fgets(buffer, sizeof(buffer), stdin)) {
+            break;
+        }
+
+        if (strncmp(buffer, "quit", 4) == 0) {
+            break;
+        }
+
+        buffer[strcspn(buffer, "\r\n")] = 0;
+
+        send(sock, buffer, strlen(buffer), 0);
+
+        recv_size = recv(sock, buffer, sizeof(buffer) - 1, 0);
+        if (recv_size <= 0) {
+            printf("Connection closed by server or error\n");
+            break;
+        }
         buffer[recv_size] = '\0';
-        printf("Received from server: %s\n", buffer);
+        printf("Echo from server: %s\n", buffer);
     }
 
     closesocket(sock);
