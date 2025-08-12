@@ -1,15 +1,20 @@
 #include <stdio.h>
 
 int main() {
-    unsigned int a = 5;  
+    unsigned int a = 5;   
+    unsigned int b = 3;   
 
-    unsigned int leftShift = a << 1;  
+    unsigned int andResult = a & b;   
+    unsigned int orResult = a | b;   
+    unsigned int xorResult = a ^ b;   
+    unsigned int notResult = ~a;     
 
-    unsigned int rightShift = a >> 1; 
-
-    printf("Original value: %u\n", a);
-    printf("Left Shift (a << 1): %u\n", leftShift);
-    printf("Right Shift (a >> 1): %u\n", rightShift);
+    printf("a = %u\n", a);
+    printf("b = %u\n", b);
+    printf("a & b (AND): %u\n", andResult);
+    printf("a | b (OR): %u\n", orResult);
+    printf("a ^ b (XOR): %u\n", xorResult);
+    printf("~a (NOT): %u\n", notResult);
 
     return 0;
 }
