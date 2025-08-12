@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-int scan_port(const char *ip, int port) {
+int scan(const char *ip, int port) {
     int sock;
     struct sockaddr_in addr;
 
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     printf("Scanning %s from port 1 to %d...\n", ip, max_port);
 
     for (int port = 1; port <= max_port; port++) {
-        if (scan_port(ip, port)) {
+        if (scan(ip, port)) {
             printf("Port %d is OPEN\n", port);
         }
     }

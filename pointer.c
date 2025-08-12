@@ -1,16 +1,23 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+void process_array(int *arr, int size) {
+    for (int i = 0; i < size; i++) {
+        arr[i] *= 3;             
+        printf("%d ", arr[i]);   
+    }
+    printf("\n");
+}
 
 int main() {
-    int number = 10;         
-    int *ptr = &number;      
+    int size = 5;
+    int *arr = malloc(size * sizeof(int));
+    if (!arr) return 1;
 
-    printf("Value of number: %d\n", number);
-    printf("Address of number: %p\n", &number);
-    printf("Value of ptr (address): %p\n", ptr);
-    printf("Value pointed to by ptr: %d\n", *ptr);  
+    for (int i = 0; i < size; i++) arr[i] = i + 1;  
 
-    *ptr = 20;
-    printf("New value of number: %d\n", number);
+    process_array(arr, size);
 
+    free(arr);
     return 0;
 }

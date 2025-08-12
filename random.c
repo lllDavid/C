@@ -2,18 +2,18 @@
 #include <stdlib.h>
 #include <time.h>
 
-int getRandom(int min, int max) {
-    return min + (rand() % (max - min + 1));
+unsigned int r_rand() {
+    unsigned int r1 = rand();
+    unsigned int r2 = rand();
+    return (r1 << 16) ^ r2;  
 }
 
 int main() {
     srand(time(NULL));
 
-    int i;
-    for(i = 0; i < 10; i++) {
-        int randomNum = getRandom(1, 100);
-        printf("%d ", randomNum);
+    for (int i = 0; i < 10; i++) {
+        printf("%u\n", r_rand());
     }
-    
+
     return 0;
 }
